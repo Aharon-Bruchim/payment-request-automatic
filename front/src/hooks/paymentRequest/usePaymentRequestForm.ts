@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPaymentPdf } from "../../utils/createPaymentPdf";
 import { toast } from "react-toastify";
+import { PaymentFormData } from "../../types/formData";
 
 export const usePaymentRequestForm = () => {
   const now = new Date();
@@ -8,7 +9,7 @@ export const usePaymentRequestForm = () => {
     new Date(now.getFullYear(), now.getMonth())
   );
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: PaymentFormData) => {
     const date =
       paymentDate &&
       `${paymentDate.getMonth() + 1}/${paymentDate.getFullYear()}`;

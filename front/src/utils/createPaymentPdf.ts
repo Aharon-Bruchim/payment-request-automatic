@@ -1,8 +1,9 @@
 import { PDFDocument, rgb } from "pdf-lib";
 import { saveAs } from "file-saver";
 import fontkit from "@pdf-lib/fontkit";
+import { PaymentFormData } from "../types/formData";
 
-export const createPaymentPdf = async (formData: any) => {
+export const createPaymentPdf = async (formData: PaymentFormData) => {
   const fontBytes = await fetch("/fonts/Assistant-Regular.ttf").then((res) =>
     res.arrayBuffer()
   );
@@ -16,15 +17,10 @@ export const createPaymentPdf = async (formData: any) => {
 
   let y = height - 60;
 
-  const drawRightText = (label: string, value: string, size = 14) => {
-    const text = value ? `${label}: ${value}` : label;
-    page.drawText(text, {
-      x: 50,
-      y,
-      size,
-      font,
-      color: rgb(0, 0, 0),
-    });
+  const drawRightText = (label: string, value?: string | number, size = 14) => {
+    const hasValue = value !== undefined && value !== null && value !== "";
+    const text = hasValue ? `${label}: ${value}` : label;
+    page.drawText(text, { x: 50, y, size, font, color: rgb(0, 0, 0) });
     y -= size + 10;
   };
 

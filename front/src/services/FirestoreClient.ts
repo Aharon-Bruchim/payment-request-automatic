@@ -12,9 +12,9 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCtLpi12ZULf5B2Xvs03ySUdxRG2jqUYEo",
-  authDomain: "payment-app-b88c4.firebaseapp.com",
-  projectId: "payment-app-b88c4",
+  apiKey: "AIzaSyA7IjA1nzbYBN7QmwUVAurrjrWonk5dxTc",
+  authDomain: "payment-request-automatic.firebaseapp.com",
+  projectId: "payment-request-automatic",
 };
 
 const app = initializeApp(firebaseConfig);

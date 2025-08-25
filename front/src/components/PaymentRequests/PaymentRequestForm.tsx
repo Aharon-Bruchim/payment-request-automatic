@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Button, Container, TextField, Typography, Box } from "@mui/material";
 import { StyledPaymentPreview } from "./StyledPaymentPreview";
 import html2pdf from "html2pdf.js";
+import { PaymentFormData } from "../../types/formData";
 
 interface Props {
   prefillClientName?: string;
@@ -27,11 +28,14 @@ export const PaymentRequestForm: React.FC<Props> = ({
     account: "66806",
   };
 
-  const [formValues, setFormValues] = useState({
-    amount: "",
+  const [formValues, setFormValues] = useState<PaymentFormData>({
+    amount: 0,
+    bank: bankDetails.bank,
+    branch: bankDetails.branch,
+    account: bankDetails.account,
     date: defaultDate,
-    studentCount: "",
-    sessionCount: "",
+    studentCount: 0,
+    sessionCount: 0,
     comments: "",
     clientName: prefillClientName,
     clientEmail: prefillClientEmail,
@@ -39,11 +43,15 @@ export const PaymentRequestForm: React.FC<Props> = ({
 
   const isFormValid = (): boolean => {
     return (
-      formValues.amount.trim() !== "" &&
-      formValues.studentCount.trim() !== "" &&
-      formValues.sessionCount.trim() !== "" &&
+      formValues.amount > 0 &&
+      formValues.studentCount > 0 &&
+      formValues.sessionCount > 0 &&
       formValues.clientName.trim() !== "" &&
-      formValues.clientEmail.trim() !== ""
+      formValues.clientEmail?.trim() !== "" &&
+      formValues.bank.trim() !== "" &&
+      formValues.branch.trim() !== "" &&
+      formValues.account.trim() !== "" &&
+      formValues.date.trim() !== ""
     );
   };
 
@@ -128,7 +136,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           type="number"
           value={formValues.amount}
           onChange={(e) =>
-            setFormValues({ ...formValues, amount: e.target.value })
+            setFormValues({ ...formValues, amount: Number(e.target.value) })
           }
         />
         <Box my={2}>
@@ -163,7 +171,10 @@ export const PaymentRequestForm: React.FC<Props> = ({
           margin="normal"
           value={formValues.studentCount}
           onChange={(e) =>
-            setFormValues({ ...formValues, studentCount: e.target.value })
+            setFormValues({
+              ...formValues,
+              studentCount: Number(e.target.value),
+            })
           }
         />
         <TextField
@@ -175,7 +186,10 @@ export const PaymentRequestForm: React.FC<Props> = ({
           margin="normal"
           value={formValues.sessionCount}
           onChange={(e) =>
-            setFormValues({ ...formValues, sessionCount: e.target.value })
+            setFormValues({
+              ...formValues,
+              sessionCount: Number(e.target.value),
+            })
           }
         />
         <TextField

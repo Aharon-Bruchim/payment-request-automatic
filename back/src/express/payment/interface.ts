@@ -1,9 +1,12 @@
-/* v8 ignore start */
-export interface Payment {
-    name: string;
-    email: string;
-}
-
-export interface PaymentDocument extends Payment {
-    _id: string;
+export interface PaymentFormData {
+    amount: number;
+    bank: string;
+    branch: string;
+    account: string;
+    date: string;
+    studentCount: number;
+    sessionCount: number;
+    comments?: string;
+    clientName: string;
+    clientEmail?: string;
 }
