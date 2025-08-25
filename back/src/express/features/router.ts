@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { validateRequest, wrapController } from '../../utils/express/wrappers.js';
-import { FeaturesController } from './controller.js';
+import { validateRequest, wrapController } from '../../utils/express/wrappers';
+import { FeaturesController } from './controller';
 import {
     createOneRequestSchema,
     deleteOneRequestSchema,
@@ -8,7 +8,7 @@ import {
     getByQueryRequestSchema,
     getCountRequestSchema,
     updateOneRequestSchema,
-} from './validations.js';
+} from './validations';
 
 export const featuresRouter = Router();
 

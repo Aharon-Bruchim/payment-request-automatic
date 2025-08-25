@@ -7,6 +7,6 @@ export const config = {
     },
     mongo: {
         uri: env.get('MONGO_URI').default('mongodb://localhost').required().asString(),
-        featuresCollectionName: env.get('PAYMENT_REQUESTS_AUTOMATIC').default('features').required().asString(),
+        featuresCollectionName: env.get('PAYMENT_REQUESTS_AUTOMATIC').default('payment_requests_automatic').required().asString(),
     },
 };

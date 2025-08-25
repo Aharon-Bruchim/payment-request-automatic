@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { TypedRequest } from '../../utils/zod.js';
-import { FeaturesManager } from './manager.js';
+import { TypedRequest } from '../../utils/zod';
+import { FeaturesManager } from './manager';
 import {
     createOneRequestSchema,
     deleteOneRequestSchema,
@@ -8,7 +8,7 @@ import {
     getByQueryRequestSchema,
     getCountRequestSchema,
     updateOneRequestSchema,
-} from './validations.js';
+} from './validations';
 
 export class FeaturesController {
     static getByQuery = async (req: TypedRequest<typeof getByQueryRequestSchema>, res: Response) => {

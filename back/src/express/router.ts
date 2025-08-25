@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { featuresRouter } from './features/router.js';
+import { paymentRouter } from './payment/router';
 
 export const appRouter = Router();
 
-appRouter.use('/api/features', featuresRouter);
+appRouter.use('/api/payment', paymentRouter);
 
 appRouter.use(['/isAlive', '/isalive', '/health'], (_req, res) => {
     res.status(200).send('alive');

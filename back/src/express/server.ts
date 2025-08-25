@@ -2,9 +2,9 @@ import { once } from 'events';
 import express from 'express';
 import helmet from 'helmet';
 import http from 'http';
-import { errorMiddleware } from '../utils/express/error.js';
-import { loggerMiddleware } from '../utils/logger/middleware.js';
-import { appRouter } from './router.js';
+import { errorMiddleware } from '../utils/express/error';
+import { loggerMiddleware } from '../utils/logger/middleware';
+import { appRouter } from './router';
 
 /* v8 ignore start */
 export class Server {
@@ -35,7 +35,7 @@ export class Server {
     /* v8 ignore start */
     async start() {
         this.http = this.app.listen(this.port);
-        await once(this.http, 'listening');
+        ~(await once(this.http, 'listening'));
     }
     /* v8 ignore end */
 }

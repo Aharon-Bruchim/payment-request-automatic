@@ -1,8 +1,8 @@
 /* v8 ignore start */
 import mongoose from 'mongoose';
-import { config } from './config.js';
-import { Server } from './express/server.js';
-import { logger } from './utils/logger/index.js';
+import { config } from './config';
+import { Server } from './express/server';
+import { logger } from './utils/logger/index';
 
 const { mongo, service } = config;
 

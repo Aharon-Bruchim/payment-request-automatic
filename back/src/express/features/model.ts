@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { config } from '../../config.js';
-import { FeatureDocument } from './interface.js';
+import { config } from '../../config';
+import { FeatureDocument } from './interface';
 
 const FeaturesSchema = new mongoose.Schema<FeatureDocument>(
     {
