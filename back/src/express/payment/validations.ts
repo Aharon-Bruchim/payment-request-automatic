@@ -4,16 +4,11 @@ import { zodMongoObjectId } from '../../utils/zod';
 const requiredFields = z
     .object({
         name: z.string(),
+        email: z.string().email(),
     })
     .required();
 
-const optionalFields = z
-    .object({
-        age: z.number(),
-    })
-    .partial();
-
-// GET /api/features
+// GET /api/payment
 export const getByQueryRequestSchema = z.object({
     body: z.object({}),
     query: z
@@ -21,19 +16,18 @@ export const getByQueryRequestSchema = z.object({
             step: z.coerce.number().min(0).default(0),
             limit: z.coerce.number().optional(),
         })
-        .merge(requiredFields.partial())
-        .merge(optionalFields),
+        .merge(requiredFields.partial()),
     params: z.object({}),
 });
 
-// GET /api/features/count
+// GET /api/payment/count
 export const getCountRequestSchema = z.object({
     body: z.object({}),
-    query: requiredFields.partial().merge(optionalFields),
+    query: requiredFields.partial(),
     params: z.object({}),
 });
 
-// GET /api/features/:id
+// GET /api/payment/:id
 export const getByIdRequestSchema = z.object({
     body: z.object({}),
     query: z.object({}),
@@ -42,23 +36,23 @@ export const getByIdRequestSchema = z.object({
     }),
 });
 
-// POST /api/features
+// POST /api/payment
 export const createOneRequestSchema = z.object({
-    body: requiredFields.merge(optionalFields),
+    body: requiredFields,
     query: z.object({}),
     params: z.object({}),
 });
 
-// PUT /api/features/:id
+// PUT /api/payment/:id
 export const updateOneRequestSchema = z.object({
-    body: requiredFields.partial().merge(optionalFields),
+    body: requiredFields.partial(),
     query: z.object({}),
     params: z.object({
         id: zodMongoObjectId,
     }),
 });
 
-// DELETE /api/features/:id
+// DELETE /api/payment/:id
 export const deleteOneRequestSchema = z.object({
     body: z.object({}),
     query: z.object({}),

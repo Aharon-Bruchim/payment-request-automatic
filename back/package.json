@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "author": "Vision",
   "license": "ISC",
-  "type": "module",
   "scripts": {
-    "start": "node --async-stack-traces ./dist/index.js",
+    "start": "node --async-stack-traces ./dist/index",
     "dev": "npm run build && npm start",
     "test": "vitest --ui --coverage",
     "build": "tsc"

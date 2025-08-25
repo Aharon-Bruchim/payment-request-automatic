@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { TypedRequest } from '../../utils/zod';
-import { FeaturesManager } from './manager';
+import { PaymentManager } from './manager';
 import {
     createOneRequestSchema,
     deleteOneRequestSchema,
@@ -10,30 +10,30 @@ import {
     updateOneRequestSchema,
 } from './validations';
 
-export class FeaturesController {
+export class PaymentController {
     static getByQuery = async (req: TypedRequest<typeof getByQueryRequestSchema>, res: Response) => {
         const { step, limit, ...query } = req.query;
 
-        res.json(await FeaturesManager.getByQuery(query, step, limit));
+        res.json(await PaymentManager.getByQuery(query, step, limit));
     };
 
     static getCount = async (req: TypedRequest<typeof getCountRequestSchema>, res: Response) => {
-        res.json(await FeaturesManager.getCount(req.query));
+        res.json(await PaymentManager.getCount(req.query));
     };
 
     static getById = async (req: TypedRequest<typeof getByIdRequestSchema>, res: Response) => {
-        res.json(await FeaturesManager.getById(req.params.id));
+        res.json(await PaymentManager.getById(req.params.id));
     };
 
     static createOne = async (req: TypedRequest<typeof createOneRequestSchema>, res: Response) => {
-        res.json(await FeaturesManager.createOne(req.body));
+        res.json(await PaymentManager.createOne(req.body));
     };
 
     static updateOne = async (req: TypedRequest<typeof updateOneRequestSchema>, res: Response) => {
-        res.json(await FeaturesManager.updateOne(req.params.id, req.body));
+        res.json(await PaymentManager.updateOne(req.params.id, req.body));
     };
 
     static deleteOne = async (req: TypedRequest<typeof deleteOneRequestSchema>, res: Response) => {
-        res.json(await FeaturesManager.deleteOne(req.params.id));
+        res.json(await PaymentManager.deleteOne(req.params.id));
     };
 }
