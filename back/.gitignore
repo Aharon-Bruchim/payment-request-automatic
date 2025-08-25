@@ -8,7 +8,7 @@ dist/
 coverage/
 
 # Dot Env Configuration
-.env
+# .env
 
 # Package lock
 package-lock.json
