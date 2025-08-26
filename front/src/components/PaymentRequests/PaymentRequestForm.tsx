@@ -1,21 +1,16 @@
-import React, { useRef, useState } from "react";
+import { useState } from "react";
 import { Button, Container, TextField, Typography, Box } from "@mui/material";
-import { StyledPaymentPreview } from "./StyledPaymentPreview";
-import html2pdf from "html2pdf.js";
 import { PaymentFormData } from "../../types/formData";
-
+import { contactsApi } from "../../services/contactsApi";
 interface Props {
-  prefillClientName?: string;
-  prefillClientEmail?: string;
+  clientName: string;
+  clientEmail: string;
 }
 
 export const PaymentRequestForm: React.FC<Props> = ({
-  prefillClientName = "",
-  prefillClientEmail = "",
+  clientName,
+  clientEmail,
 }) => {
-  const [formData, setFormData] = useState<any | null>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-
   const now = new Date();
   const defaultDate = `${String(now.getMonth() + 1).padStart(
     2,
@@ -29,99 +24,35 @@ export const PaymentRequestForm: React.FC<Props> = ({
   };
 
   const [formValues, setFormValues] = useState<PaymentFormData>({
-    amount: 0,
+    amount: null,
     bank: bankDetails.bank,
     branch: bankDetails.branch,
     account: bankDetails.account,
     date: defaultDate,
-    studentCount: 0,
-    sessionCount: 0,
+    studentCount: null,
+    sessionCount: null,
     comments: "",
-    clientName: prefillClientName,
-    clientEmail: prefillClientEmail,
+    clientName: clientName,
+    clientEmail: clientEmail,
   });
 
   const isFormValid = (): boolean => {
     return (
+      formValues.amount !== null &&
       formValues.amount > 0 &&
+      formValues.studentCount !== null &&
       formValues.studentCount > 0 &&
-      formValues.sessionCount > 0 &&
-      formValues.clientName.trim() !== "" &&
-      formValues.clientEmail?.trim() !== "" &&
-      formValues.bank.trim() !== "" &&
-      formValues.branch.trim() !== "" &&
-      formValues.account.trim() !== "" &&
-      formValues.date.trim() !== ""
+      formValues.sessionCount !== null &&
+      formValues.sessionCount > 0
     );
   };
 
-  const generateFullData = (): any => {
-    return {
-      ...formValues,
-      ...bankDetails,
-      date: formValues.date || defaultDate,
-    };
-  };
-
-  const downloadPdf = async () => {
-    const fullData = generateFullData();
-    setFormData(fullData);
-
-    setTimeout(() => {
-      if (previewRef.current) {
-        html2pdf()
-          .from(previewRef.current)
-          .set({
-            margin: 1,
-            filename: `בקשת תשלום ${fullData.clientName} ${fullData.date}.pdf`,
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-          })
-          .save();
-      }
-    }, 100);
-  };
-
-  const openMailClient = async () => {
-    const fullData = generateFullData();
-    setFormData(fullData);
-
-    if (previewRef.current) {
-      await html2pdf()
-        .from(previewRef.current)
-        .set({
-          margin: 1,
-          filename: `בקשת תשלום ${fullData.clientName} ${fullData.date}.pdf`,
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        })
-        .save();
+  const openServer = async () => {
+    try {
+      await contactsApi.create(formValues);
+    } catch (error) {
+      console.error("Error creating payment request:", error);
     }
-
-    const subject = `בקשת תשלום משירה `;
-    const body = `
-  שלום,
-
-   בקשת תשלום עבור ${fullData.clientName} בסך ${fullData.amount} ₪.
-  
-  📅 תאריך: ${fullData.date}
-  👨‍🏫 מספר תלמידים: ${fullData.studentCount || "-"}
-  📚 מספר שיעורים: ${fullData.sessionCount || "-"}
-  💬 הערות: ${fullData.comments || "-"}
-  
-  פרטי בנק:
-  🏦 בנק: ${fullData.bank}
-  🏢 סניף: ${fullData.branch}
-  📄 חשבון: ${fullData.account}
-  
-מצורף PDF עם פרטי הבקשה.  
-  תודה רבה!
-    `.trim();
-
-    const mailtoLink = `mailto:${
-      fullData.clientEmail
-    }?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoLink, "_blank");
   };
 
   return (
@@ -238,30 +169,12 @@ export const PaymentRequestForm: React.FC<Props> = ({
         <Box
           sx={{
             display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            gap: 2,
+            justifyContent: "center",
             mt: 2,
           }}
         >
           <Button
-            onClick={downloadPdf}
-            variant="outlined"
-            color="secondary"
-            disabled={!isFormValid()}
-            sx={{
-              width: "calc(50% - 8px)",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-2px)",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-              },
-            }}
-          >
-            הורד PDF
-          </Button>
-          <Button
-            onClick={openMailClient}
+            onClick={openServer}
             variant="outlined"
             color="success"
             disabled={!isFormValid()}
@@ -274,16 +187,10 @@ export const PaymentRequestForm: React.FC<Props> = ({
               },
             }}
           >
-            פתח מייל לשליחה
+            שרת
           </Button>
         </Box>
       </form>
-
-      {formData && (
-        <div style={{ display: "none" }}>
-          <StyledPaymentPreview ref={previewRef} data={formData} />
-        </div>
-      )}
     </Container>
   );
 };

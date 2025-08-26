@@ -15,10 +15,7 @@ const PaymentRequests: React.FC = () => {
           יצירת בקשת תשלום
         </Typography>
       </Box>
-      <PaymentRequestForm
-        prefillClientName={clientName}
-        prefillClientEmail={clientEmail}
-      />
+      <PaymentRequestForm clientName={clientName} clientEmail={clientEmail} />
     </Container>
   );
 };
