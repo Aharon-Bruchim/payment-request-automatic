@@ -36,15 +36,11 @@ export const PaymentRequestForm: React.FC<Props> = ({
     clientEmail: clientEmail,
   });
 
-  const isFormValid = (): boolean => {
-    return (
-      formValues.amount !== null &&
-      formValues.amount > 0 &&
-      formValues.studentCount !== null &&
-      formValues.studentCount > 0 &&
-      formValues.sessionCount !== null &&
-      formValues.sessionCount > 0
-    );
+  const isFormValid = () => {
+    const amount = Number(formValues.amount ?? 0);
+    const students = Number(formValues.studentCount ?? 0);
+    const sessions = Number(formValues.sessionCount ?? 0);
+    return amount > 0 && students > 0 && sessions > 0;
   };
 
   const openServer = async () => {
@@ -65,7 +61,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           required
           margin="normal"
           type="number"
-          value={formValues.amount}
+          value={formValues.amount ?? ""}
           onChange={(e) =>
             setFormValues({ ...formValues, amount: Number(e.target.value) })
           }
@@ -100,7 +96,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           type="number"
           required
           margin="normal"
-          value={formValues.studentCount}
+          value={formValues.studentCount ?? ""}
           onChange={(e) =>
             setFormValues({
               ...formValues,
@@ -115,7 +111,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           type="number"
           required
           margin="normal"
-          value={formValues.sessionCount}
+          value={formValues.sessionCount ?? ""}
           onChange={(e) =>
             setFormValues({
               ...formValues,
