@@ -1,7 +1,7 @@
 import { once } from 'events';
 import express from 'express';
 import helmet from 'helmet';
-import cors from 'cors';
+// import cors from 'cors';
 import http from 'http';
 // import corsOptions from '../corsConfig';
 import { errorMiddleware } from '../utils/express/error';
