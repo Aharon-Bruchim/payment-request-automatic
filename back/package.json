@@ -8,7 +8,7 @@
     "dev": "npm run build && npm run copy:assets && npm start",
     "test": "vitest --ui --coverage",
     "build": "tsc",
-    "copy:assets": "copyfiles -u 2 assets/fonts/**/* dist/assets/fonts"
+    "copy:assets": "copyfiles -u 1 \"assets/**/*\" dist/assets"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
