@@ -123,14 +123,16 @@ async function createPaymentPdfBuffer(p: PaymentFormData): Promise<Buffer> {
     const bg = await getBackgroundDataUrl();
     const html = buildStyledHtmlForPdf(p, fontUrl, bg);
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({
+        headless: true,
+        executablePath: (puppeteer as any).executablePath?.(),
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const data = await page.pdf({
-        printBackground: true,
-        preferCSSPageSize: true,
-    });
+    const data = await page.pdf({ printBackground: true, preferCSSPageSize: true });
 
     await browser.close();
     return Buffer.from(data);
