@@ -129,8 +129,15 @@ async function createPaymentPdfBuffer(p: PaymentFormData): Promise<Buffer> {
     ]);
     const browser = await puppeteer.launch({
         headless: true,
-        executablePath: process.env['PUPPETEER_EXECUTABLE_PATH'] || (puppeteer as any).executablePath?.(),
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-extensions',
+        ],
     });
 
     const page = await browser.newPage();
