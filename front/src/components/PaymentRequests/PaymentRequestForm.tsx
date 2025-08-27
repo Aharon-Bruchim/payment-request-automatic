@@ -45,9 +45,10 @@ export const PaymentRequestForm: React.FC<Props> = ({
 
   const openServer = async () => {
     try {
+      console.log("Sending data:", formValues);
       await contactsApi.create(formValues);
-    } catch (error) {
-      console.error("Error creating payment request:", error);
+    } catch (error: any) {
+      console.error("Full error:", error.response?.data || error);
     }
   };
 

@@ -122,19 +122,22 @@ async function createPaymentPdfBuffer(p: PaymentFormData): Promise<Buffer> {
     const fontUrl = await getFontUrl();
     const bg = await getBackgroundDataUrl();
     const html = buildStyledHtmlForPdf(p, fontUrl, bg);
-
+    console.log('Chrome executable paths to try:', [
+        '/opt/render/.cache/puppeteer/chrome/linux-139.0.7258.138/chrome-linux64/chrome',
+        '/usr/bin/google-chrome',
+        '/usr/bin/chromium-browser',
+    ]);
     const browser = await puppeteer.launch({
         headless: true,
-        executablePath: (puppeteer as any).executablePath?.(),
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        executablePath: process.env['PUPPETEER_EXECUTABLE_PATH'] || (puppeteer as any).executablePath?.(),
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
     });
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-
     const data = await page.pdf({ printBackground: true, preferCSSPageSize: true });
-
     await browser.close();
+
     return Buffer.from(data);
 }
 
