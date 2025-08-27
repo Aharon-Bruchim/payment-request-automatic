@@ -1,9 +1,9 @@
 import { once } from 'events';
 import express from 'express';
 import helmet from 'helmet';
-// import cors from 'cors';
+import cors from 'cors';
 import http from 'http';
-// import corsOptions from '../corsConfig';
+import corsOptions from '../corsConfig';
 import { errorMiddleware } from '../utils/express/error';
 import { loggerMiddleware } from '../utils/logger/middleware';
 import { appRouter } from './router';
@@ -25,7 +25,7 @@ export class Server {
         app.use(helmet());
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
-        // app.use(cors(corsOptions));
+        app.use(cors(corsOptions));
         app.use(loggerMiddleware);
         app.use(appRouter);
 
