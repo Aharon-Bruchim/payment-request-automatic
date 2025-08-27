@@ -7,9 +7,3 @@ export class ServiceError extends Error {
         super(message);
     }
 }
-
-export class DocumentNotFoundError extends ServiceError {
-    constructor(id: string) {
-        super(404, `No feature found with id ${id}`);
-    }
-}

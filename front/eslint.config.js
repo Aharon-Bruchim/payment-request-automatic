@@ -1,59 +1,28 @@
-import js from '@eslint/js';
-import ts from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import importPlugin from 'eslint-plugin-import';
-import promise from 'eslint-plugin-promise';
-import prettier from 'eslint-plugin-prettier';
+import js from "@eslint/js";
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import tseslint from "typescript-eslint";
 
-export default [
-  js.configs.recommended, 
-  ts.configs['recommended-type-checked'], 
-  ts.configs['stylistic-type-checked'], 
-  react.configs.recommended, 
-  reactHooks.configs.recommended, 
-  importPlugin.configs.recommended, 
-  promise.configs.recommended,
+export default tseslint.config(
+  { ignores: ["dist"] },
   {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
-      parser: tsParser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parserOptions: {
-        project: ['./tsconfig.json'],
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-      'import/resolver': {
-        typescript: true,
-        node: true,
-      },
+      ecmaVersion: 2020,
+      globals: globals.browser,
     },
     plugins: {
-      '@typescript-eslint': ts,
-      react: react,
-      'react-hooks': reactHooks,
-      import: importPlugin,
-      promise: promise,
-      prettier: prettier,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
     },
-    ignores: ['*.cjs', '*.spec.ts'],
     rules: {
-      quotes: ['error', 'single'],
-      semi: ['error', 'always'],
-      'react/jsx-uses-react': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'import/no-unresolved': 'error',
-      'import/no-named-as-default-member': 'off',
-      'import/no-default-export': 'error',
-      'prettier/prettier': 'error',
+      ...reactHooks.configs.recommended.rules,
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true },
+      ],
     },
-  },
-];
+  }
+);

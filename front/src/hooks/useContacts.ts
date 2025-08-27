@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useShallow } from "zustand/react/shallow";
-import { FirestoreClient } from "../../services/FirestoreClient";
-import { Contact } from "../../types/contact";
-import { useContactsStore } from "../../stores/contacts";
+import { FirestoreClient } from "../services/FirestoreClient";
+import { Contact } from "../types/contact";
+import { useContactsStore } from "../stores/contacts";
 
 type Options = { autoFetch?: boolean };
 

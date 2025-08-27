@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, Alert } from "@mui/material";
 import ContactsList from "../../components/Contacts/ContactsList";
 import NewContactButton from "../../components/Contacts/NewContactButton/NewContactButton";
-import { useContacts } from "../../hooks/contacts/useContacts";
+import { useContacts } from "../../hooks/useContacts";
 import { AppLoader } from "../../components/common/AppLoader";
 
 export default function ContactsPage() {

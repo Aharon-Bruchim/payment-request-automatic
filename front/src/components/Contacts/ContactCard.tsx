@@ -3,9 +3,9 @@ import { Send, Edit, Delete } from "@mui/icons-material";
 import { Contact } from "../../types/contact";
 import EditContactDialog from "./EditContactDialog";
 import DeleteContactDialog from "./DeleteContactDialog";
-import { useEditContactDialog } from "../../hooks/contacts/useEditContactDialog";
-import { useDeleteContactDialog } from "../../hooks/contacts/useDeleteContactDialog";
-import { useContacts } from "../../hooks/contacts/useContacts";
+import { useEditContactDialog } from "../../hooks/useEditContactDialog";
+import { useDeleteContactDialog } from "../../hooks/useDeleteContactDialog";
+import { useContacts } from "../../hooks/useContacts";
 
 export default function ContactCard({ contact }: { contact: Contact }) {
   const edit = useEditContactDialog(contact.name, contact.email);

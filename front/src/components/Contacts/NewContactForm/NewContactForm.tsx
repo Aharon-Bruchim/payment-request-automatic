@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { useContacts } from "../../../hooks/contacts/useContacts";
+import { useContacts } from "../../../hooks/useContacts";
 
 const NewContactForm: React.FC = () => {
   const [name, setName] = useState("");

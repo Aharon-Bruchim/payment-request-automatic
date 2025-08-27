@@ -74,37 +74,42 @@ function buildStyledHtmlForPdf(p: PaymentFormData, fontUrl: string, bgDataUrl: s
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <style>
+@page { size: A4; margin: 0 }
 @font-face { font-family: "Assistant"; src: url("${fontUrl}") format("truetype"); font-weight: 400; font-style: normal; }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{margin:0;padding:0;height:100%}
 body{font-family: Assistant, Arial, sans-serif; background:#f3f4f6}
-.wrap{width:100%; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:32px}
-.paper{width:90%; max-width:700px; position:relative; background:#fff; border-radius:16px; padding:32px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.1)}
-.bg{position:absolute; inset:0; background-image:url('${bgDataUrl}'); background-repeat:no-repeat; background-position:center; background-size:cover; opacity:.3; z-index:0}
-.content{position:relative; z-index:1; direction:rtl; text-align:right}
-.h1{margin:0 0 16px; font-size:22px; font-weight:700; color:#1976d2; text-align:center}
-.row{margin:6px 0; font-size:16px}
-.box{margin-top:18px; border:1px solid #bbb; border-radius:10px; padding:12px}
+.page{width:210mm;height:297mm;display:flex;align-items:flex-start;justify-content:center;padding:15mm}
+.card{width:100%;border-radius:16px;background:#fff;position:relative;overflow:hidden;padding:16mm;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.bg{position:absolute;inset:0;background-image:url('${bgDataUrl}');background-repeat:no-repeat;background-position:center;background-size:cover;opacity:.28;z-index:0}
+.content{position:relative;z-index:1;direction:rtl;text-align:right}
+.title{margin:0 0 10mm;font-size:22px;font-weight:700;color:#1976d2;text-align:right}
+.rows{display:grid;grid-auto-rows:min-content;row-gap:4mm}
+.row{display:grid;grid-template-columns:20px 1fr;align-items:center;column-gap:4mm;font-size:16px}
+.ico{grid-column:1/2;justify-self:end}
+.txt{grid-column:2/3}
+.box{margin-top:8mm;border:1px solid #bbb;border-radius:10px;padding:6mm}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="paper">
+  <div class="page">
+    <div class="card">
       <div class="bg"></div>
       <div class="content">
-        <div class="h1">בקשת תשלום עבור ${p.clientName} תאריך: ${p.date}</div>
-        <div class="row">💰 סכום לתשלום: ${p.amount} ₪</div>
-        <div class="row">📆 תאריך: ${p.date || 'לא הוזן'}</div>
-        <div class="row">👨‍🎓 מספר תלמידים: ${p.studentCount}</div>
-        <div class="row">📚 מספר שיעורים: ${p.sessionCount}</div>
-        <div class="row">📝 הערות: ${p.comments || '—'}</div>
+        <h1 class="title">תאריך: ${p.date} &nbsp; בקשת תשלום עבור ${p.clientName}</h1>
+        <div class="rows">
+          <div class="row"><div class="ico">💰</div><div class="txt">סכום לתשלום: ${p.amount} ₪</div></div>
+          <div class="row"><div class="ico">📆</div><div class="txt">תאריך: ${p.date || 'לא הוזן'}</div></div>
+          <div class="row"><div class="ico">👨‍🎓</div><div class="txt">מספר תלמידים: ${p.studentCount}</div></div>
+          <div class="row"><div class="ico">📚</div><div class="txt">מספר שיעורים: ${p.sessionCount}</div></div>
+          <div class="row"><div class="ico">📝</div><div class="txt">הערות: ${p.comments || '—'}</div></div>
+        </div>
         <div class="box">
-          <div class="row">🧾 פרטי בנק להעברה:</div>
-          <div class="row">🏦 בנק: ${p.bank}</div>
-          <div class="row">🏢 סניף: ${p.branch}</div>
-          <div class="row">📄 מספר חשבון: ${p.account}</div>
+          <div class="row"><div class="ico">🧾</div><div class="txt">פרטי בנק להעברה:</div></div>
+          <div class="row"><div class="ico">🏦</div><div class="txt">בנק: ${p.bank}</div></div>
+          <div class="row"><div class="ico">🏢</div><div class="txt">סניף: ${p.branch}</div></div>
+          <div class="row"><div class="ico">📄</div><div class="txt">מספר חשבון: ${p.account}</div></div>
         </div>
       </div>
     </div>
@@ -113,7 +118,7 @@ body{font-family: Assistant, Arial, sans-serif; background:#f3f4f6}
 </html>`;
 }
 
-export async function createPaymentPdfBuffer(p: PaymentFormData): Promise<Buffer> {
+async function createPaymentPdfBuffer(p: PaymentFormData): Promise<Buffer> {
     const fontUrl = await getFontUrl();
     const bg = await getBackgroundDataUrl();
     const html = buildStyledHtmlForPdf(p, fontUrl, bg);
@@ -122,14 +127,13 @@ export async function createPaymentPdfBuffer(p: PaymentFormData): Promise<Buffer
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const pdfData = await page.pdf({
-        format: 'A4',
+    const data = await page.pdf({
         printBackground: true,
-        margin: { top: '10mm', right: '10mm', bottom: '10mm', left: '10mm' },
+        preferCSSPageSize: true,
     });
 
     await browser.close();
-    return Buffer.isBuffer(pdfData) ? pdfData : Buffer.from(pdfData);
+    return Buffer.from(data);
 }
 
 export class PaymentManager {
