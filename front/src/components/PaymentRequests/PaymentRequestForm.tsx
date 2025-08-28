@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Container, TextField, Typography, Box } from "@mui/material";
+import html2pdf from "html2pdf.js";
+
 import { PaymentFormData } from "../../types/formData";
 import { contactsApi } from "../../services/contactsApi";
+import { StyledPaymentPreview } from "./StyledPaymentPreview";
 interface Props {
   clientName: string;
   clientEmail: string;
@@ -11,6 +14,8 @@ export const PaymentRequestForm: React.FC<Props> = ({
   clientName,
   clientEmail,
 }) => {
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [formData, setFormData] = useState<PaymentFormData | null>(null);
   const now = new Date();
   const defaultDate = `${String(now.getMonth() + 1).padStart(
     2,
@@ -45,13 +50,40 @@ export const PaymentRequestForm: React.FC<Props> = ({
 
   const openServer = async () => {
     try {
-      console.log("Sending data:", formValues);
-      await contactsApi.create(formValues);
+      const fullData = { ...formValues };
+      setFormData(fullData);
+
+      setTimeout(async () => {
+        if (previewRef.current) {
+          const pdfBlob = await html2pdf()
+            .from(previewRef.current)
+            .set({
+              margin: 1,
+              html2canvas: { scale: 2 },
+              jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            })
+            .outputPdf("blob");
+
+          const formData = new FormData();
+          formData.append("pdfFile", pdfBlob, "payment.pdf");
+          formData.append("amount", fullData.amount!.toString());
+          formData.append("bank", fullData.bank);
+          formData.append("branch", fullData.branch);
+          formData.append("account", fullData.account);
+          formData.append("date", fullData.date);
+          formData.append("studentCount", fullData.studentCount!.toString());
+          formData.append("sessionCount", fullData.sessionCount!.toString());
+          formData.append("clientName", fullData.clientName);
+          formData.append("clientEmail", fullData.clientEmail);
+          if (fullData.comments) formData.append("comments", fullData.comments);
+
+          await contactsApi.create(formData);
+        }
+      }, 100);
     } catch (error: any) {
       console.error("Full error:", error.response?.data || error);
     }
   };
-
   return (
     <Container maxWidth="sm">
       <form>
@@ -188,6 +220,11 @@ export const PaymentRequestForm: React.FC<Props> = ({
           </Button>
         </Box>
       </form>
+      {formData && (
+        <div style={{ display: "none" }}>
+          <StyledPaymentPreview ref={previewRef} data={formData} />
+        </div>
+      )}
     </Container>
   );
 };

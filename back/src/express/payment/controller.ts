@@ -1,17 +1,31 @@
-import { Response } from 'express';
-import { TypedRequest } from '../../utils/zod';
+import { Request, Response } from 'express';
 import { PaymentManager } from './manager';
-import { createOneRequestSchema } from './validations';
+// import { createOneRequestSchema } from './validations';
 
 export class PaymentController {
-    static createOne = async (req: TypedRequest<typeof createOneRequestSchema>, res: Response) => {
+    static createOne = async (req: Request, res: Response): Promise<void> => {
         try {
-            const result = await PaymentManager.createOne(req.body);
+            if (!req.file?.buffer) {
+                res.status(400).json({
+                    ok: false,
+                    error: 'PDF file is required',
+                });
+                return;
+            }
+
+            // המר strings למספרים ידנית
+            const paymentData = {
+                ...req.body,
+                amount: Number(req.body.amount),
+                studentCount: Number(req.body.studentCount),
+                sessionCount: Number(req.body.sessionCount),
+            };
+
+            const result = await PaymentManager.createOne(paymentData, req.file.buffer);
             res.json(result);
         } catch (err: any) {
-            console.error('❌ Error in createOne:', err); // לוג מלא לשרת
-            res.status(400) // עדיף 400 בפיתוח כדי לראות מה קרה
-                .json({ ok: false, error: err?.message || 'unknown error' });
+            console.error('❌ Error in createOne:', err);
+            res.status(400).json({ ok: false, error: err?.message || 'unknown error' });
         }
     };
 }

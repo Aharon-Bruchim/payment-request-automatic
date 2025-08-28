@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PaymentFormData } from "../types/formData";
+// import { PaymentFormData } from "../types/formData";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 export const contactsApi = {
-  async create(formData: PaymentFormData) {
+  async create(formData: FormData) {
     const response = await api.post("/", formData);
     return response.data;
   },
