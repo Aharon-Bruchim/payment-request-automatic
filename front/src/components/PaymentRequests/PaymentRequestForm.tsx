@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button, Container, TextField, Typography, Box } from "@mui/material";
 import { StyledPaymentPreview } from "./StyledPaymentPreview";
 import { useMail } from "../../hooks/useMail";
@@ -19,6 +19,12 @@ export const PaymentRequestForm: React.FC<Props> = ({
     clientEmail,
   });
   const { isLoading, isSuccess, isError } = useIsAlive();
+
+  const [errors, setErrors] = useState<{
+    amount?: string | null;
+    studentCount?: string | null;
+    sessionCount?: string | null;
+  }>({});
 
   const isFormValid = () => {
     const amount = formValues.amount ?? 0;
@@ -82,10 +88,14 @@ export const PaymentRequestForm: React.FC<Props> = ({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       const num = Number(value);
-      setFormValues({
-        ...formValues,
-        [field]: value === "" || isNaN(num) ? null : num,
-      });
+
+      if (value !== "" && isNaN(num)) {
+        setErrors({ ...errors, [field]: "אנא הקלד מספר בלבד" });
+        setFormValues({ ...formValues, [field]: null });
+      } else {
+        setErrors({ ...errors, [field]: null });
+        setFormValues({ ...formValues, [field]: value === "" ? null : num });
+      }
     };
 
   return (
@@ -104,6 +114,8 @@ export const PaymentRequestForm: React.FC<Props> = ({
           }}
           value={formValues.amount ?? ""}
           onChange={handleNumberChange("amount")}
+          error={!!errors.amount}
+          helperText={errors.amount}
         />
 
         <Box my={2}>
@@ -143,6 +155,8 @@ export const PaymentRequestForm: React.FC<Props> = ({
           }}
           value={formValues.studentCount ?? ""}
           onChange={handleNumberChange("studentCount")}
+          error={!!errors.studentCount}
+          helperText={errors.studentCount}
         />
 
         <TextField
@@ -158,6 +172,8 @@ export const PaymentRequestForm: React.FC<Props> = ({
           }}
           value={formValues.sessionCount ?? ""}
           onChange={handleNumberChange("sessionCount")}
+          error={!!errors.sessionCount}
+          helperText={errors.sessionCount}
         />
 
         <TextField
