@@ -8,7 +8,6 @@ import { errorMiddleware } from '../utils/express/error';
 import { loggerMiddleware } from '../utils/logger/middleware';
 import { appRouter } from './router';
 
-/* v8 ignore start */
 export class Server {
     private app: express.Application;
 
@@ -17,15 +16,14 @@ export class Server {
     constructor(private port: number) {
         this.app = Server.createExpressApp();
     }
-    /* v8 ignore end */
 
     static createExpressApp() {
         const app = express();
 
+        app.use(cors(corsOptions));
         app.use(helmet());
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
-        app.options('*', cors(corsOptions));
         app.use(loggerMiddleware);
         app.use(appRouter);
 
@@ -34,10 +32,8 @@ export class Server {
         return app;
     }
 
-    /* v8 ignore start */
     async start() {
         this.http = this.app.listen(this.port);
         ~(await once(this.http, 'listening'));
     }
-    /* v8 ignore end */
 }

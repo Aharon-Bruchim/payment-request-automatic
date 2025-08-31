@@ -6,9 +6,10 @@ const api = axios.create({
   timeout: 10000,
 });
 
-export const contactsApi = {
+export const mailApi = {
+  paymentURL: import.meta.env.VITE_PAYMENT_URL,
   async create(formData: FormData) {
-    const response = await api.post("/", formData);
+    const response = await api.post(this.paymentURL, formData);
     return response.data;
   },
 };

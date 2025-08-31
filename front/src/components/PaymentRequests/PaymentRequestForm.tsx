@@ -1,10 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Button, Container, TextField, Typography, Box } from "@mui/material";
-import html2pdf from "html2pdf.js";
-
-import { PaymentFormData } from "../../types/formData";
-import { contactsApi } from "../../services/contactsApi";
 import { StyledPaymentPreview } from "./StyledPaymentPreview";
+import { useMail } from "../../hooks/useMail";
+import { useIsAlive } from "../../hooks/useIsAlive";
+
 interface Props {
   clientName: string;
   clientEmail: string;
@@ -14,32 +13,12 @@ export const PaymentRequestForm: React.FC<Props> = ({
   clientName,
   clientEmail,
 }) => {
-  const previewRef = useRef<HTMLDivElement>(null);
-  const [formData, setFormData] = useState<PaymentFormData | null>(null);
-  const now = new Date();
-  const defaultDate = `${String(now.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}.${now.getFullYear()}`;
-
-  const bankDetails = {
-    bank: "הפועלים (12)",
-    branch: "698",
-    account: "66806",
-  };
-
-  const [formValues, setFormValues] = useState<PaymentFormData>({
-    amount: null,
-    bank: bankDetails.bank,
-    branch: bankDetails.branch,
-    account: bankDetails.account,
-    date: defaultDate,
-    studentCount: null,
-    sessionCount: null,
-    comments: "",
-    clientName: clientName,
-    clientEmail: clientEmail,
+  const previewRef = useRef<HTMLDivElement | null>(null);
+  const { formValues, setFormValues, openServer, bankDetails } = useMail({
+    clientName,
+    clientEmail,
   });
+  const { isLoading, isSuccess, isError } = useIsAlive();
 
   const isFormValid = () => {
     const amount = Number(formValues.amount ?? 0);
@@ -48,42 +27,56 @@ export const PaymentRequestForm: React.FC<Props> = ({
     return amount > 0 && students > 0 && sessions > 0;
   };
 
-  const openServer = async () => {
-    try {
-      const fullData = { ...formValues };
-      setFormData(fullData);
+  const getButtonState = () => {
+    const formValid = isFormValid();
 
-      setTimeout(async () => {
-        if (previewRef.current) {
-          const pdfBlob = await html2pdf()
-            .from(previewRef.current)
-            .set({
-              margin: 1,
-              html2canvas: { scale: 2 },
-              jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-            })
-            .outputPdf("blob");
-
-          const formData = new FormData();
-          formData.append("pdfFile", pdfBlob, "payment.pdf");
-          formData.append("amount", fullData.amount!.toString());
-          formData.append("bank", fullData.bank);
-          formData.append("branch", fullData.branch);
-          formData.append("account", fullData.account);
-          formData.append("date", fullData.date);
-          formData.append("studentCount", fullData.studentCount!.toString());
-          formData.append("sessionCount", fullData.sessionCount!.toString());
-          formData.append("clientName", fullData.clientName);
-          formData.append("clientEmail", fullData.clientEmail);
-          if (fullData.comments) formData.append("comments", fullData.comments);
-
-          await contactsApi.create(formData);
-        }
-      }, 100);
-    } catch (error: any) {
-      console.error("Full error:", error.response?.data || error);
+    if (!formValid) {
+      return {
+        disabled: true,
+        text: "מלא את כל השדות",
+        backgroundColor: "#9e9e9e",
+        color: "#ffffff",
+      };
     }
+
+    if (isLoading) {
+      return {
+        disabled: true,
+        text: "השרת מתעורר",
+        backgroundColor: "#ff9800",
+        color: "#ffffff",
+      };
+    }
+
+    if (isError) {
+      return {
+        disabled: true,
+        text: "בעיה בשרת - יש לחכות",
+        backgroundColor: "#f44336",
+        color: "#ffffff",
+      };
+    }
+
+    if (isSuccess) {
+      return {
+        disabled: false,
+        text: "שלח מייל",
+        backgroundColor: "#4caf50",
+        color: "#ffffff",
+      };
+    }
+
+    return {
+      disabled: true,
+      text: "ממתין...",
+      backgroundColor: "#9e9e9e",
+      color: "#ffffff",
+    };
   };
+
+  const handleOpenServer = () => openServer(previewRef);
+  const buttonState = getButtonState();
+
   return (
     <Container maxWidth="sm">
       <form>
@@ -99,6 +92,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             setFormValues({ ...formValues, amount: Number(e.target.value) })
           }
         />
+
         <Box my={2}>
           <Typography variant="subtitle2" fontWeight="bold">
             פרטי בנק:
@@ -107,10 +101,6 @@ export const PaymentRequestForm: React.FC<Props> = ({
           <Typography>🏢 סניף: {bankDetails.branch}</Typography>
           <Typography>📄 חשבון: {bankDetails.account}</Typography>
         </Box>
-
-        <input type="hidden" name="bank" value={bankDetails.bank} />
-        <input type="hidden" name="branch" value={bankDetails.branch} />
-        <input type="hidden" name="account" value={bankDetails.account} />
 
         <TextField
           fullWidth
@@ -122,6 +112,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             setFormValues({ ...formValues, date: e.target.value })
           }
         />
+
         <TextField
           fullWidth
           label="מספר תלמידים"
@@ -137,6 +128,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             })
           }
         />
+
         <TextField
           fullWidth
           label="מספר שיעורים"
@@ -152,6 +144,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             })
           }
         />
+
         <TextField
           fullWidth
           label="הערות"
@@ -164,6 +157,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             setFormValues({ ...formValues, comments: e.target.value })
           }
         />
+
         <TextField
           fullWidth
           label="שם הלקוח"
@@ -180,6 +174,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             },
           }}
         />
+
         <TextField
           fullWidth
           label="אימייל הלקוח"
@@ -195,6 +190,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
             },
           }}
         />
+
         <Box
           sx={{
             display: "flex",
@@ -203,26 +199,43 @@ export const PaymentRequestForm: React.FC<Props> = ({
           }}
         >
           <Button
-            onClick={openServer}
-            variant="outlined"
-            color="success"
-            disabled={!isFormValid()}
+            onClick={handleOpenServer}
+            variant="contained"
+            disabled={buttonState.disabled}
             sx={{
               width: "calc(50% - 8px)",
+              backgroundColor: buttonState.backgroundColor,
+              color: buttonState.color,
               transition: "all 0.3s ease",
-              "&:hover": {
-                transform: "translateY(-2px)",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+              "&:hover": buttonState.disabled
+                ? {}
+                : {
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                    backgroundColor:
+                      buttonState.backgroundColor === "#4caf50"
+                        ? "#45a049"
+                        : buttonState.backgroundColor === "#ff9800"
+                        ? "#e68900"
+                        : buttonState.backgroundColor === "#f44336"
+                        ? "#da190b"
+                        : "#757575",
+                  },
+              "&:disabled": {
+                backgroundColor: buttonState.backgroundColor,
+                color: buttonState.color,
+                opacity: buttonState.disabled ? 0.8 : 1,
               },
             }}
           >
-            שרת
+            {buttonState.text}
           </Button>
         </Box>
       </form>
-      {formData && (
+
+      {formValues && (
         <div style={{ display: "none" }}>
-          <StyledPaymentPreview ref={previewRef} data={formData} />
+          <StyledPaymentPreview ref={previewRef} data={formValues} />
         </div>
       )}
     </Container>

@@ -4,9 +4,18 @@ import { Link } from "react-router-dom";
 
 export const Navigation = memo(function Navigation() {
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "#34495e" }}>
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            flexGrow: 1,
+            textDecoration: "none",
+            color: "inherit",
+          }}
+          component={Link}
+          to="/contacts"
+        >
           אפליקציה לניהול תשלומים
         </Typography>
         <Button color="inherit" component={Link} to="/requests">

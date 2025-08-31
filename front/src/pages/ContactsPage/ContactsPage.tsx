@@ -2,10 +2,14 @@ import { Box, Paper, Typography, Alert } from "@mui/material";
 import ContactsList from "../../components/Contacts/ContactsList";
 import NewContactButton from "../../components/Contacts/NewContactButton/NewContactButton";
 import { useContacts } from "../../hooks/useContacts";
-import { AppLoader } from "../../components/common/AppLoader";
+import { Spinner } from "../../components/common/Spinner";
 
 export default function ContactsPage() {
   const { contacts, loading, error } = useContacts({ autoFetch: true });
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -14,9 +18,7 @@ export default function ContactsPage() {
           <Typography variant="h5" gutterBottom>
             רשימת אנשי קשר
           </Typography>
-          {loading ? (
-            <AppLoader />
-          ) : error ? (
+          {error ? (
             <Alert severity="error">{error}</Alert>
           ) : (
             <ContactsList contacts={contacts} />

@@ -1,8 +1,9 @@
 import { forwardRef } from "react";
 import { Box, Typography, Paper, Stack } from "@mui/material";
+import { PaymentFormData } from "../../types/formData";
 
 interface Props {
-  data: any;
+  data: PaymentFormData;
 }
 
 export const StyledPaymentPreview = forwardRef<HTMLDivElement, Props>(
@@ -65,7 +66,6 @@ export const StyledPaymentPreview = forwardRef<HTMLDivElement, Props>(
 
             <Box
               sx={{
-                // backgroundColor: "#f9f9f9",
                 border: "1px solid #bbb",
                 borderRadius: 2,
                 p: 2,
