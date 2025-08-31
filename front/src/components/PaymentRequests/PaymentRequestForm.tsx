@@ -107,7 +107,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           name="amount"
           required
           margin="normal"
-          type="text"
+          type="tel"
           inputMode="numeric"
           InputLabelProps={{
             sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
@@ -148,7 +148,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           name="studentCount"
           required
           margin="normal"
-          type="text"
+          type="tel"
           inputMode="numeric"
           InputLabelProps={{
             sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
@@ -165,7 +165,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           name="sessionCount"
           required
           margin="normal"
-          type="text"
+          type="tel"
           inputMode="numeric"
           InputLabelProps={{
             sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
