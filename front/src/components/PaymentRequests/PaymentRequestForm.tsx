@@ -86,10 +86,14 @@ export const PaymentRequestForm: React.FC<Props> = ({
           name="amount"
           required
           margin="normal"
-          type="number"
+          type="text"
+          inputMode="numeric"
           value={formValues.amount ?? ""}
           onChange={(e) =>
-            setFormValues({ ...formValues, amount: Number(e.target.value) })
+            setFormValues({
+              ...formValues,
+              amount: e.target.value === "" ? null : Number(e.target.value),
+            })
           }
         />
 
@@ -117,14 +121,16 @@ export const PaymentRequestForm: React.FC<Props> = ({
           fullWidth
           label="מספר תלמידים"
           name="studentCount"
-          type="number"
           required
           margin="normal"
+          type="text"
+          inputMode="numeric"
           value={formValues.studentCount ?? ""}
           onChange={(e) =>
             setFormValues({
               ...formValues,
-              studentCount: Number(e.target.value),
+              studentCount:
+                e.target.value === "" ? null : Number(e.target.value),
             })
           }
         />
@@ -133,14 +139,16 @@ export const PaymentRequestForm: React.FC<Props> = ({
           fullWidth
           label="מספר שיעורים"
           name="sessionCount"
-          type="number"
           required
           margin="normal"
+          type="text"
+          inputMode="numeric"
           value={formValues.sessionCount ?? ""}
           onChange={(e) =>
             setFormValues({
               ...formValues,
-              sessionCount: Number(e.target.value),
+              sessionCount:
+                e.target.value === "" ? null : Number(e.target.value),
             })
           }
         />
