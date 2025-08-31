@@ -21,9 +21,9 @@ export const PaymentRequestForm: React.FC<Props> = ({
   const { isLoading, isSuccess, isError } = useIsAlive();
 
   const isFormValid = () => {
-    const amount = Number(formValues.amount ?? 0);
-    const students = Number(formValues.studentCount ?? 0);
-    const sessions = Number(formValues.sessionCount ?? 0);
+    const amount = formValues.amount ?? 0;
+    const students = formValues.studentCount ?? 0;
+    const sessions = formValues.sessionCount ?? 0;
     return amount > 0 && students > 0 && sessions > 0;
   };
 
@@ -77,6 +77,17 @@ export const PaymentRequestForm: React.FC<Props> = ({
   const handleOpenServer = () => openServer(previewRef);
   const buttonState = getButtonState();
 
+  const handleNumberChange =
+    (field: "amount" | "studentCount" | "sessionCount") =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      const num = Number(value);
+      setFormValues({
+        ...formValues,
+        [field]: value === "" || isNaN(num) ? null : num,
+      });
+    };
+
   return (
     <Container maxWidth="sm">
       <form>
@@ -88,13 +99,11 @@ export const PaymentRequestForm: React.FC<Props> = ({
           margin="normal"
           type="text"
           inputMode="numeric"
+          InputLabelProps={{
+            sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
+          }}
           value={formValues.amount ?? ""}
-          onChange={(e) =>
-            setFormValues({
-              ...formValues,
-              amount: e.target.value === "" ? null : Number(e.target.value),
-            })
-          }
+          onChange={handleNumberChange("amount")}
         />
 
         <Box my={2}>
@@ -108,9 +117,13 @@ export const PaymentRequestForm: React.FC<Props> = ({
 
         <TextField
           fullWidth
+          required
           label="תאריך תשלום"
           name="date"
           margin="normal"
+          InputLabelProps={{
+            sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
+          }}
           value={formValues.date}
           onChange={(e) =>
             setFormValues({ ...formValues, date: e.target.value })
@@ -125,14 +138,11 @@ export const PaymentRequestForm: React.FC<Props> = ({
           margin="normal"
           type="text"
           inputMode="numeric"
+          InputLabelProps={{
+            sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
+          }}
           value={formValues.studentCount ?? ""}
-          onChange={(e) =>
-            setFormValues({
-              ...formValues,
-              studentCount:
-                e.target.value === "" ? null : Number(e.target.value),
-            })
-          }
+          onChange={handleNumberChange("studentCount")}
         />
 
         <TextField
@@ -143,14 +153,11 @@ export const PaymentRequestForm: React.FC<Props> = ({
           margin="normal"
           type="text"
           inputMode="numeric"
+          InputLabelProps={{
+            sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
+          }}
           value={formValues.sessionCount ?? ""}
-          onChange={(e) =>
-            setFormValues({
-              ...formValues,
-              sessionCount:
-                e.target.value === "" ? null : Number(e.target.value),
-            })
-          }
+          onChange={handleNumberChange("sessionCount")}
         />
 
         <TextField
@@ -172,6 +179,9 @@ export const PaymentRequestForm: React.FC<Props> = ({
           name="clientName"
           required
           margin="normal"
+          InputLabelProps={{
+            sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
+          }}
           value={formValues.clientName}
           inputProps={{
             readOnly: true,
@@ -185,9 +195,13 @@ export const PaymentRequestForm: React.FC<Props> = ({
 
         <TextField
           fullWidth
+          required
           label="אימייל הלקוח"
           name="clientEmail"
           margin="normal"
+          InputLabelProps={{
+            sx: { "& .MuiFormLabel-asterisk": { color: "red" } },
+          }}
           value={formValues.clientEmail}
           inputProps={{
             readOnly: true,
@@ -199,13 +213,7 @@ export const PaymentRequestForm: React.FC<Props> = ({
           }}
         />
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mt: 2,
-          }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <Button
             onClick={handleOpenServer}
             variant="contained"
