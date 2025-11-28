@@ -5,7 +5,8 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   timeout: 10000,
 });
-
+console.log("VITE_BACKEND_URL:", import.meta.env.VITE_BACKEND_URL);
+console.log("VITE_IS_ALIVE_URL:", import.meta.env.VITE_IS_ALIVE_URL);
 export const mailApi = {
   paymentURL: import.meta.env.VITE_IS_ALIVE_URL,
   async isAlive() {
@@ -66,3 +67,4 @@ export const useIsAlive = () => {
     ...state,
   };
 };
+
